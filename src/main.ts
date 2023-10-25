@@ -63,13 +63,15 @@ async function bootstrap() {
     // customfavIcon: '../favicon.jpg'
   });
 
+  await app.listen(3000);
+
   const URL = await app.getUrl();
   console.info(`bootstrap: Server running at ${URL}`);
   console.info(`Swagger running at ${URL}/api`);
   console.info(`OpenAPI JSON at ${URL}/api-json`);
-
-  await app.listen(3000);
 }
 bootstrap()
   .then(() => console.log('Nest application started successfully.'))
-  .catch((error) => console.error(`Error starting Nest application: ${error.message}`));;
+  .catch((error) =>
+    console.error(`Error starting Nest application: ${error.message}`),
+  );

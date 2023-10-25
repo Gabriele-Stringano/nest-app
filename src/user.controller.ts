@@ -1,39 +1,56 @@
-import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Put, Res } from "@nestjs/common";
-import { UserService } from "./user.service";
-import { CreateUserDto } from "./create-user.dto";
-import { Response } from "express";
-import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
-import { ModifyUserAgeDto } from "./modify-userAge.dto";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpStatus,
+  Param,
+  Post,
+  Put,
+  Res,
+} from '@nestjs/common';
+import { UserService } from './user.service';
+import { CreateUserDto } from './create-user.dto';
+import { Response } from 'express';
+import {
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { ModifyUserAgeDto } from './modify-userAge.dto';
 
 @Controller()
 // con l'api tag dovrei aver racchiuso queste api in una loro categoria
 @ApiTags('USERS')
 export class UserController {
-  constructor(private readonly UserService: UserService) { }
+  constructor(private readonly UserService: UserService) {}
 
-  @Get()
-  sayHello(): string {
-    return this.UserService.sayHello();
-  }
-
-  @Get(':firstName')
+  @Get('users/:firstName')
   // Il comando @ApiResponse serve per indicare ad openapi quali risposte posso avere specificando stato e tipo ritornato
   @ApiOperation({
     summary: 'Prendi utente per nome',
-    description: 'Richiede come parametro il nome dell utente'
+    description: 'Richiede come parametro il nome dell utente',
   })
-  // apiParam mi permette di specificare i parametri passabili, con nome, tipo, required, 
+  // apiParam mi permette di specificare i parametri passabili, con nome, tipo, required,
   // enum to specify possible values of a request parameter or a model property.
   @ApiParam({ name: 'firstName', type: String, required: true })
   // con ApiResponse ho la lista di tutte le risposte che posso avere chiamando l'api
-  @ApiResponse({ status: 404, description: 'Il nome passato come parametro non è valido' })
+  @ApiResponse({
+    status: 404,
+    description: 'Il nome passato come parametro non è valido',
+  })
   @ApiResponse({
     status: 200,
     type: Object,
     description: 'getEsitoNotifica',
   })
   //Uso res perchè voglio personalizzare i codici di ritorno dalle api
-  userByName(@Param('firstName') firstName: string, @Res({ passthrough: true }) response: Response) {
+  userByName(
+    @Param('firstName') firstName: string,
+    @Res({ passthrough: true }) response: Response,
+  ) {
     const userFoud = this.UserService.userByName(firstName);
     if (userFoud) {
       return userFoud;
@@ -43,7 +60,7 @@ export class UserController {
     }
   }
 
-  @Post()
+  @Post('users/')
   // Iniziamo con il definire la funzione che deve essere lo stesso metodo dell'user.service
   // I valori che passiamo nel body devono rispettare la struttura dell'oggetto CreateUserDto cresto nel file dto
   // Essendo tipizzato il parametro createUserDto sarà proprio di tipo CreateUserDto
@@ -56,29 +73,29 @@ export class UserController {
     return this.UserService.createUser(createUserDto);
   }
 
-  @Put('firstName')
+  @Put('users/:firstName')
   @ApiParam({ name: 'firstName', type: String, required: true })
   @ApiBody({
     description: 'Informazioni da inserire nell user',
     type: ModifyUserAgeDto,
   })
-  modifyUserAge(@Param('firstName') firstName: string, @Body() createUserDto: ModifyUserAgeDto) {
+  modifyUserAge(
+    @Param('firstName') firstName: string,
+    @Body() createUserDto: ModifyUserAgeDto,
+  ) {
     try {
       return this.UserService.modifyUserAge(firstName, createUserDto);
-    }
-    catch (err) {
+    } catch (err) {
       return { response: 'something went wrong!' };
     }
   }
 
-
-  @Delete(':firstName')
+  @Delete('users/:firstName')
   @ApiParam({ name: 'firstName', type: String, required: true })
   deleteUserByName(@Param('firstName') firstName: string) {
     try {
       return this.UserService.deleteUserByName(firstName);
-    }
-    catch (err) {
+    } catch (err) {
       return { response: 'something went wrong!' };
     }
   }
