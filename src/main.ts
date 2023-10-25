@@ -8,26 +8,28 @@ async function bootstrap() {
   const swaggerOptions = {
     openapi: '3.0.0',
     info: {
-      title: '',
-      description: '',
-      'x-summary': '',
-      version: '',
-      termsOfService: '',
+      title: 'Api Nest',
+      description: 'Api di porva in nest',
+      // sembra essere una descrizione più breve
+      'x-summary': 'escrzione breve?',
+      version: '1.0.0',
+      termsOfService: 'nessuno',
       contact: {
-        name: '',
+        name: 'Gabriele',
         url: '',
-        email: '',
+        email: 'gs@gmail.com',
       },
-      // così'e' qesto x-api-id?
+      // Some APIs use API keys for authorization. An API key is a token that a client provides when making API calls. The key can be sent in the query string:
+      // Potrebbe essere questo il campo
       'x-api-id': '',
     },
     tags: [
       {
-        name: '',
-        description: '',
+        name: 'USERS',
+        description: 'Api per gestire utenti con nome e eta',
       },
     ],
-    externalDocs: {
+    /* externalDocs: {
       description: 'OpenAPI JSON',
       url: '/api-json',
     },
@@ -43,7 +45,7 @@ async function bootstrap() {
         'x-api-key': [],
       },
     ],
-    /* components: {
+     components: {
        securitySchemes: {
          'x-api-key': {
            type: 'apiKey',

@@ -2,10 +2,12 @@ import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Put, Res } from
 import { UserService } from "./user.service";
 import { CreateUserDto } from "./create-user.dto";
 import { Response } from "express";
-import { ApiBody, ApiOperation, ApiParam, ApiResponse } from "@nestjs/swagger";
+import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { ModifyUserAgeDto } from "./modify-userAge.dto";
 
 @Controller()
+// con l'api tag dovrei aver racchiuso queste api in una loro categoria
+@ApiTags('USERS')
 export class UserController {
   constructor(private readonly UserService: UserService) { }
 
@@ -72,7 +74,7 @@ export class UserController {
 
   @Delete(':firstName')
   @ApiParam({ name: 'firstName', type: String, required: true })
-  deleteUserByName(@Param('firstName') firstName: string){
+  deleteUserByName(@Param('firstName') firstName: string) {
     try {
       return this.UserService.deleteUserByName(firstName);
     }
