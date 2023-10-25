@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { CreateUserDto } from "./create-user.dto";
+import { ModifyUserAgeDto } from "./modify-userAge.dto";
 
 @Injectable()
 export class UserService {
@@ -29,5 +30,24 @@ export class UserService {
       ...createUserDto
     }
     return user;
+  }
+
+  modifyUserAge(firstName: string, modifyUserAgeDto: ModifyUserAgeDto) {
+    const result = this.users.filter(user => user.firstName === firstName);
+    if(result){
+      result[0].age ==  modifyUserAgeDto.age;
+      return result;
+    }else{
+      throw new Error;
+    }
+  }
+
+  deleteUserByName(firstName: string){
+    const remuvableUser = this.users.filter(user => user.firstName === firstName);
+    if(remuvableUser){
+      return remuvableUser
+    }else{
+      throw new Error;
+    }
   }
 }
