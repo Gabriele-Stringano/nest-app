@@ -8,6 +8,7 @@ import {
   Post,
   Put,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './create-user.dto';
@@ -20,12 +21,14 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { ModifyUserAgeDto } from './modify-userAge.dto';
+import { AuthGuard } from './auth.guard';
 
 @Controller()
+@UseGuards(AuthGuard)
 // con l'api tag dovrei aver racchiuso queste api in una loro categoria
 @ApiTags('USERS')
 export class UserController {
-  constructor(private readonly UserService: UserService) {}
+  constructor(private readonly UserService: UserService) { }
 
   @Get('users/:firstName')
   // Il comando @ApiResponse serve per indicare ad openapi quali risposte posso avere specificando stato e tipo ritornato
