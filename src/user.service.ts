@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './create-user.dto';
 import { ModifyUserAgeDto } from './modify-userAge.dto';
+import { HttpService } from '@nestjs/axios';
 
 @Injectable()
 export class UserService {
+  constructor(private readonly httpService: HttpService) { }
   private users = [
     {
       firstName: 'rossi',
@@ -48,3 +50,15 @@ export class UserService {
     }
   }
 }
+
+/*   async findAll(): Promise<Cat[]> {
+    const { data } = await firstValueFrom(
+      this.httpService.get<Cat[]>('http://localhost:3000/cats').pipe(
+        catchError((error: AxiosError) => {
+          this.logger.error(error.response.data);
+          throw 'An error happened!';
+        }),
+      ),
+    );
+    return data;
+  } */
