@@ -1,105 +1,26 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  HttpStatus,
-  Param,
-  Post,
-  Put,
-  Res,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './create-user.dto';
-import { Response } from 'express';
-import {
-  ApiBody,
-  ApiOperation,
-  ApiParam,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
-import { ModifyUserAgeDto } from './modify-userAge.dto';
+import { ApiTags } from '@nestjs/swagger';
+import { User as UserModel } from '@prisma/client';
 import { AuthGuard } from './auth.guard';
 
 @Controller()
-@UseGuards(AuthGuard)
+// @UseGuards(AuthGuard)
 // con l'api tag dovrei aver racchiuso queste api in una loro categoria
 @ApiTags('USERS')
 export class UserController {
-  constructor(private readonly UserService: UserService) { }
+  constructor(private readonly UserService: UserService) {}
 
-  @Get('users/:firstName')
-  // Il comando @ApiResponse serve per indicare ad openapi quali risposte posso avere specificando stato e tipo ritornato
-  @ApiOperation({
-    summary: 'Prendi utente per nome',
-    description: 'Richiede come parametro il nome dell utente',
-  })
-  // apiParam mi permette di specificare i parametri passabili, con nome, tipo, required,
-  // enum to specify possible values of a request parameter or a model property.
-  @ApiParam({ name: 'firstName', type: String, required: true })
-  // con ApiResponse ho la lista di tutte le risposte che posso avere chiamando l'api
-  @ApiResponse({
-    status: 404,
-    description: 'Il nome passato come parametro non è valido',
-  })
-  @ApiResponse({
-    status: 200,
-    type: Object,
-    description: 'getEsitoNotifica',
-  })
-  //Uso res perchè voglio personalizzare i codici di ritorno dalle api
-  userByName(
-    @Param('firstName') firstName: string,
-    @Res({ passthrough: true }) response: Response,
-  ) {
-    const userFoud = this.UserService.userByName(firstName);
-    if (userFoud) {
-      return userFoud;
-    } else {
-      response.status(HttpStatus.NOT_FOUND).send('User not found!');
-      return;
-    }
-  }
-
-  @Post('users/')
-  // Iniziamo con il definire la funzione che deve essere lo stesso metodo dell'user.service
-  // I valori che passiamo nel body devono rispettare la struttura dell'oggetto CreateUserDto cresto nel file dto
-  // Essendo tipizzato il parametro createUserDto sarà proprio di tipo CreateUserDto
-  // A questo punto posso richiamare effettivamente il metodo che mi interessa dell'oggetto nel service e passargli il parametro di tipo CreateUserDto
-  @ApiBody({
-    description: 'Informazioni da inserire nell user',
-    type: CreateUserDto,
-  })
-  createUser(@Body() createUserDto: CreateUserDto) {
-    return this.UserService.createUser(createUserDto);
-  }
-
-  @Put('users/:firstName')
-  @ApiParam({ name: 'firstName', type: String, required: true })
-  @ApiBody({
-    description: 'Informazioni da inserire nell user',
-    type: ModifyUserAgeDto,
-  })
-  modifyUserAge(
-    @Param('firstName') firstName: string,
-    @Body() createUserDto: ModifyUserAgeDto,
-  ) {
-    try {
-      return this.UserService.modifyUserAge(firstName, createUserDto);
-    } catch (err) {
-      return { response: 'something went wrong!' };
-    }
-  }
-
-  @Delete('users/:firstName')
-  @ApiParam({ name: 'firstName', type: String, required: true })
-  deleteUserByName(@Param('firstName') firstName: string) {
-    try {
-      return this.UserService.deleteUserByName(firstName);
-    } catch (err) {
-      return { response: 'something went wrong!' };
-    }
+  @Post('user')
+  async signupUser(
+    @Body() userData: { name?: string; email: string },
+  ): Promise<UserModel> {
+    return this.UserService.createUser(userData);
   }
 }
+
+/*{
+  "title": "primo giorno a casa",
+  "content": "si programma lets gp",
+  "authorEmail": "bobobo@gmail.com"
+} */

@@ -7,9 +7,14 @@ import { HttpModule } from '@nestjs/axios';
 import { PostModule } from './post.module';
 
 @Module({
-  imports: [HttpModule,UserModule,PostModule,ConfigModule.forRoot({
-    isGlobal: true,
-  })],
+  imports: [
+    HttpModule,
+    UserModule,
+    PostModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

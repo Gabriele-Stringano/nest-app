@@ -1,64 +1,56 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './create-user.dto';
-import { ModifyUserAgeDto } from './modify-userAge.dto';
-import { HttpService } from '@nestjs/axios';
+import { PrismaService } from './prisma.service';
+import { User, Prisma } from '@prisma/client';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly httpService: HttpService) { }
-  private users = [
-    {
-      firstName: 'rossi',
-      age: 23,
-    },
-    {
-      firstName: 'bianchi',
-      age: 28,
-    },
-  ];
+  constructor(private prisma: PrismaService) {}
 
-  userByName(firstName: string) {
-    const userFoud = this.users.filter((user) => user.firstName === firstName);
-    return userFoud;
+  async user(
+    userWhereUniqueInput: Prisma.UserWhereUniqueInput,
+  ): Promise<User | null> {
+    return this.prisma.user.findUnique({
+      where: userWhereUniqueInput,
+    });
   }
 
-  createUser(createUserDto: CreateUserDto) {
-    const user = {
-      ...createUserDto,
-    };
-    return user;
+  async users(params: {
+    skip?: number;
+    take?: number;
+    cursor?: Prisma.UserWhereUniqueInput;
+    where?: Prisma.UserWhereInput;
+    orderBy?: Prisma.UserOrderByWithRelationInput;
+  }): Promise<User[]> {
+    const { skip, take, cursor, where, orderBy } = params;
+    return this.prisma.user.findMany({
+      skip,
+      take,
+      cursor,
+      where,
+      orderBy,
+    });
   }
 
-  modifyUserAge(firstName: string, modifyUserAgeDto: ModifyUserAgeDto) {
-    const result = this.users.filter((user) => user.firstName === firstName);
-    if (result) {
-      result[0].age == modifyUserAgeDto.age;
-      return result;
-    } else {
-      throw new Error();
-    }
+  async createUser(data: Prisma.UserCreateInput): Promise<User> {
+    return this.prisma.user.create({
+      data,
+    });
   }
 
-  deleteUserByName(firstName: string) {
-    const remuvableUser = this.users.filter(
-      (user) => user.firstName === firstName,
-    );
-    if (remuvableUser) {
-      return remuvableUser;
-    } else {
-      throw new Error();
-    }
+  async updateUser(params: {
+    where: Prisma.UserWhereUniqueInput;
+    data: Prisma.UserUpdateInput;
+  }): Promise<User> {
+    const { where, data } = params;
+    return this.prisma.user.update({
+      data,
+      where,
+    });
+  }
+
+  async deleteUser(where: Prisma.UserWhereUniqueInput): Promise<User> {
+    return this.prisma.user.delete({
+      where,
+    });
   }
 }
-
-/*   async findAll(): Promise<Cat[]> {
-    const { data } = await firstValueFrom(
-      this.httpService.get<Cat[]>('http://localhost:3000/cats').pipe(
-        catchError((error: AxiosError) => {
-          this.logger.error(error.response.data);
-          throw 'An error happened!';
-        }),
-      ),
-    );
-    return data;
-  } */

@@ -1,0 +1,64 @@
+import { Injectable } from '@nestjs/common';
+import { CreateUserDto } from './create-user.dto';
+import { ModifyUserAgeDto } from './modify-userAge.dto';
+import { HttpService } from '@nestjs/axios';
+
+@Injectable()
+export class UserService {
+  constructor(private readonly httpService: HttpService) {}
+  private users = [
+    {
+      firstName: 'rossi',
+      age: 23,
+    },
+    {
+      firstName: 'bianchi',
+      age: 28,
+    },
+  ];
+
+  userByName(firstName: string) {
+    const userFoud = this.users.filter((user) => user.firstName === firstName);
+    return userFoud;
+  }
+
+  createUser(createUserDto: CreateUserDto) {
+    const user = {
+      ...createUserDto,
+    };
+    return user;
+  }
+
+  modifyUserAge(firstName: string, modifyUserAgeDto: ModifyUserAgeDto) {
+    const result = this.users.filter((user) => user.firstName === firstName);
+    if (result) {
+      result[0].age == modifyUserAgeDto.age;
+      return result;
+    } else {
+      throw new Error();
+    }
+  }
+
+  deleteUserByName(firstName: string) {
+    const remuvableUser = this.users.filter(
+      (user) => user.firstName === firstName,
+    );
+    if (remuvableUser) {
+      return remuvableUser;
+    } else {
+      throw new Error();
+    }
+  }
+}
+
+/*   async findAll(): Promise<Cat[]> {
+    const { data } = await firstValueFrom(
+      this.httpService.get<Cat[]>('http://localhost:3000/cats').pipe(
+        catchError((error: AxiosError) => {
+          this.logger.error(error.response.data);
+          throw 'An error happened!';
+        }),
+      ),
+    );
+    return data;
+  } */
